@@ -2,6 +2,6 @@
 
 
 int main() {
-  tokenizer("shouldbeignored<testing>strange</testing>  <hey>< / hey> <there> <is/></there><></>shouldbeignoredtoo");
+  tokenizer("<testing>strange</testing>  <hey>< / hey> <there> <is/></there><></>");
   return 0;
 }

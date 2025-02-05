@@ -23,7 +23,7 @@ class token {
   std::string tokenAssociatedText = "";
 
   public:
-  token(std::string nTokenName) {
+  token(std::string &nTokenName) {
     const int nameLength = nTokenName.length();
     //determine token type
     if (nameLength > 0) {
@@ -73,65 +73,80 @@ void printQueueItems(std::deque<token> &queue) {
 }
 
 
-void tokenizer(std::string rawString) {
+void tokenizer(std::string &&rawString) {
   std::deque<token> tokenQueue;
 
   states currentState = NULL_START;
   std::string tempString = "";
 
-  for (int i = 0; i < rawString.length(); i++) {
-      switch (rawString[i]) {
+  try {
 
-        case '<':
-          if (currentState == S_DELIM) {
-              //raise error
-          } else {
+    for (int i = 0; i < rawString.length(); i++) {
+        switch (rawString[i]) {
 
-            if (tempString.length()) {
-              token tempToken = tokenQueue.back();
+          case '<':
+            if (currentState == S_DELIM) {
+                //raise error
+                throw ("Error: < delimiter already utilised\n");
+            } else {
 
-              //Ensure text is assigned only to open tokens
-              if (tempToken.getTokenType() == S_TAG) {
+              if (tempString.length() > 0) {
+                token tempToken = tokenQueue.back();
 
-                tokenQueue.pop_back();
-                tempToken.setAssociatedText(tempString);
-                tokenQueue.push_back(tempToken);
+                //Ensure text is assigned only to open tokens
+                if (tempToken.getTokenType() == S_TAG) {
 
-              } else {
-                //Raise Error
+                  tokenQueue.pop_back();
+                  tempToken.setAssociatedText(tempString);
+                  tokenQueue.push_back(tempToken);
+
+                } else {
+                  //Raise Error
+                  throw ("Error: Text cannot be assigned to closed or void tags, make sure that text is only assigned after an open tag\n");
+                }
+
+                tempString = "";
+
               }
 
-              tempString = "";
-
+              currentState = S_DELIM;
             }
+            break;
 
-            currentState = S_DELIM;
-          }
-          break;
-
-        case '>':
-          if (currentState == S_DELIM) {
-            currentState = E_DELIM;
-            tokenQueue.push_back(token(tempString));
-            tempString = "";
-          } else {
-            //raise error
-          }
-          break;
-
-        // skip empty spaces
-        case ' ':
-          break;
-
-        default:
-          if (currentState == NULL_START) {
+          case '>':
+            if (currentState == S_DELIM) {
+              currentState = E_DELIM;
+              tokenQueue.push_back(token(tempString));
+              tempString = "";
+            } else {
               //raise error
-          } else {
-              tempString += rawString[i];
-          }
-          break;
-      }
+              throw ("Error: Closed tag should have a corresponding open tag to match\n");
+            }
+            break;
+
+          // skip empty spaces
+          case ' ':
+            break;
+
+          default:
+            if (currentState == NULL_START) {
+                //raise error
+                throw ("Error: Text cannot appear at the start without being enclosed in tags\n");
+            } else {
+                tempString += rawString[i];
+            }
+            break;
+        }
+    }
+
+    if (tempString.length() != 0 || currentState == S_DELIM) {
+      throw ("Error: Text cannot appear outside of enclosed tags\n");
+    }
+
+    printQueueItems(tokenQueue);
+    
   }
 
-  printQueueItems(tokenQueue);
+  catch (const char* errorMsg) { std::cout << errorMsg << '\n';}
+
 }
