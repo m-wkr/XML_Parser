@@ -3,7 +3,6 @@
 #include <deque>
 #include "lexer.hpp"
 
-#include <vector>
 
 enum states {
   NULL_START, //covers spaces before first tag
@@ -21,7 +20,7 @@ void printQueueItems(std::deque<token> &queue) {
 }
 
 
-void tokenizer(std::string &&rawString) {
+std::deque<token> tokenizer(std::string &&rawString) {
   std::deque<token> tokenQueue;
 
   states currentState = NULL_START;
@@ -90,11 +89,10 @@ void tokenizer(std::string &&rawString) {
     if (tempString.length() != 0 || currentState == S_DELIM) {
       throw ("Error: Text cannot appear outside of enclosed tags\n");
     }
-
-    printQueueItems(tokenQueue);
-    
   }
 
   catch (const char* errorMsg) { std::cout << errorMsg << '\n';}
+
+  return tokenQueue;
 
 }
