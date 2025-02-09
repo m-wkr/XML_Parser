@@ -1,46 +1,49 @@
 #pragma once
 
-#include <string>
+#include <iostream>
 #include <vector>
-#include "lexer.hpp"
+#include "token.hpp"
+#include <memory>
+
+
 
 
 class node {
-  token* associatedTokenP;
-  std::vector<node> children = {};
+  token associatedToken;
+  std::vector<std::shared_ptr<node>> children = {};  //was node template type
 
   public: 
-  node(token* nTokenP) {
-		associatedTokenP = nTokenP;
-  };
+  node(token nToken) : associatedToken(nToken) { // check notes
+		//associatedToken = nToken;
+  }
 
-	void addChild(node &child) {
-		children.push_back(child);
-	}
+  ~node() {
+	/* FOR DEBUGGING PURPOSES */
+    //std::cout << associatedToken.getTokenName() << " destroyed\n";
+  }
 
-	void addChild(node &&child) {
+	void addChild(std::shared_ptr<node> child) { //was node type
 		children.push_back(child);
 	}
 
 	tokenType getTokenType(){
-		if (associatedTokenP) {
-			return associatedTokenP->getTokenType();
-		} else {
-			return tokenType::NIL;
-		}
+		return associatedToken.getTokenType();
+
 	}
 
 	std::string getTokenName() {
-		return associatedTokenP->getTokenName();
+		return associatedToken.getTokenName();
 	}
 
-	std::vector<node> getChildren() {
+	std::vector<std::shared_ptr<node>> getChildren() { //was std::vector<node>
 		return children;
 	}
 
 };
 
+typedef std::shared_ptr<node> nodeSharedPtr;
 
-node formAST(node rootNode,std::deque<token> &queue);
 
-void preorderTraversal(node currentNode);
+nodeSharedPtr formAST(std::deque<token> &queue);
+
+void preorderTraversal(nodeSharedPtr currentNode);
