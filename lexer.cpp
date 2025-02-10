@@ -18,7 +18,7 @@ void printQueueItems(std::deque<token> &queue) {
 }
 
 
-std::deque<token> tokenizer(std::string &&rawString) {
+std::deque<token> tokenizer(std::string &rawString) {
   std::deque<token> tokenQueue;
 
   states currentState = NULL_START;
