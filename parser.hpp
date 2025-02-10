@@ -35,6 +35,10 @@ class node {
 		return associatedToken.getTokenName();
 	}
 
+	std::string getTokenAssociatedText() {
+		return associatedToken.getText();
+	}
+
 	std::vector<std::shared_ptr<node>> getChildren() { //was std::vector<node>
 		return children;
 	}

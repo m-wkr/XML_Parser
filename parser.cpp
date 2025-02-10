@@ -65,7 +65,7 @@ nodeSharedPtr formAST(std::deque<token> &queue) {
 
 void preorderTraversal(nodeSharedPtr currentNode) {
 
-	std::cout << currentNode->getTokenName() << '\n';
+	std::cout << currentNode->getTokenName() << " " << currentNode->getTokenAssociatedText() << '\n';
 
 	for (int i = 0; i < currentNode->getChildren().size(); i++) {
 
