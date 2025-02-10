@@ -3,7 +3,7 @@
 This project was initially inspired by [LowByteProduction's RegEx Engine](https://github.com/lowbyteproductions/Regular-Expression-Engine), which in turn lead to this naive approach
 in building an XML lexer and parser to validate the format of a file containing strictly XML formatting.
 
-## Semantical Limitations
+## Syntactic Limitations
 
 * Due to how the lexer skips whitespace, both tag names and enclosed text will lose any spacing utilised.
 * The lexer only allows text if it immediately follows an opening tag, such as `<test>{textHere}...</test>`.
